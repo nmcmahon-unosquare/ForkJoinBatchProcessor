@@ -24,8 +24,8 @@ public class BatchProcessor {
     }
 
     public BatchProcessor(int maxBatchSize, int numberOfWorkers) {
-        if(maxBatchSize < 1) {
-            throw new IllegalArgumentException("Max batch size must be greater than 0");
+        if(maxBatchSize < 1 || numberOfWorkers < 1) {
+            throw new IllegalArgumentException("Max batch size and number of workers must be greater than 0");
         }
         this.maxBatchSize = maxBatchSize;
         this.numberOfWorkers = numberOfWorkers;
@@ -34,21 +34,21 @@ public class BatchProcessor {
 
     public <T> void process(T[] batch, Consumer<T> action) {
         ForkJoinTask<?> task = new BatchProcessingTask<>(batch, maxBatchSize, 0, batch.length, action);
-        startTask(task, Runtime.getRuntime().availableProcessors());
+        startTask(task);
     }
 
     @SafeVarargs
     public final <T> void process(Consumer<T> action, T... batch) {
         ForkJoinTask<?> task = new BatchProcessingTask<>(batch, maxBatchSize, 0, batch.length, action);
-        startTask(task, Runtime.getRuntime().availableProcessors());
+        startTask(task);
     }
 
     public <T> void process(List<T> batch, Consumer<T> action) {
         ForkJoinTask<?> task = new BatchProcessingTask<>(batch, maxBatchSize, 0, batch.size(), action);
-        startTask(task, Runtime.getRuntime().availableProcessors());
+        startTask(task);
     }
 
-    private void startTask(ForkJoinTask<?> task, int numberOfWorkers) {
+    private void startTask(ForkJoinTask<?> task) {
         ForkJoinPool pool = new ForkJoinPool(numberOfWorkers);
         pool.invoke(task);
     }

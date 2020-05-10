@@ -105,8 +105,8 @@ public class BatchProcessorTest {
         batchProcessor.process((Person person) -> person.setName("Processed"));
     }
 
-    @Test
-    public void testBatchProcessorDefaultsNumberOfWorkersWhenNumberOfWorkersProvidedIsZero() {
+    @Test (expected = IllegalArgumentException.class)
+    public void testBatchProcessorThrowsExceptionWhenNumberOfWorkersProvidedIsZero() {
         BatchProcessor batchProcessor = new BatchProcessor(100, 0);
         Person testPerson1 = new Person("TestPerson1", 50);
         Person testPerson2 = new Person("TestPerson2", 60);
